@@ -1,15 +1,16 @@
 var mongoose = require('mongoose');
 
+/*
 var connection = mongoose.connect('mongodb://localhost/wildzapp', function(error) {
 	if (error)
 		console.log(error);
 });
-
+*/
 var models = {};
 
-var Schema = mongoose.Schema;
-
+//var Schema = mongoose.Schema;
 //------------------------------------------------------
+/*
 var UserSchema = new Schema({
 	username: String
 });
@@ -38,6 +39,7 @@ ConversationSchema.statics.getConversation = function(from_u, to_u, callback) {
 
 
 models.Conversation = connection.model('conversations', ConversationSchema);
+*/
 //------------------------------------------------------
 module.exports = models;
 

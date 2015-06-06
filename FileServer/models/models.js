@@ -10,34 +10,22 @@ var models = {};
 var Schema = mongoose.Schema;
 
 //------------------------------------------------------
-var UserSchema = new Schema({
-	username: String
+var FileSchema = new Schema({
+	path: String,
+  parentfile : {type: Schema.Types.ObjectId ,ref: 'File'},
+  url: String,
+  filetype: String
 });
 
-models.User = connection.model('users', UserSchema);
-
-var ConversationSchema = new Schema({
-	from: String,
-	to: String,
-	messages: [{ from: String, body: String, date: Date }]
-});
-
-ConversationSchema.statics.getAllConversations = function(username, callback) {
-	var query = this.find().or([{to: username }, { from: username }]);
-	query.exec(callback);
-};
-
-ConversationSchema.statics.getAllMessages = function(from_u, to_u, callback) {
-	this.findOne({ from: from_u, to: to_u }, callback);
-};
-
-ConversationSchema.statics.getConversation = function(from_u, to_u, callback) {
-	var query = this.findOne().or([{ to: to_u, from: from_u }, { to: from_u, from: to_u }]);
-	query.exec(callback);
-};
+models.File = connection.model('files', FileSchema);
 
 
-models.Conversation = connection.model('conversations', ConversationSchema);
+
+//ConversationSchema.statics.getAllConversations = function(username, callback) {
+	//var query = this.find().or([{to: username }, { from: username }]);
+	//query.exec(callback);
+//};
+
 //------------------------------------------------------
 module.exports = models;
 

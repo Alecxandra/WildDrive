@@ -33,7 +33,7 @@ server.on('listening', onListening);
  * Socket io
  */
  
-var io = require('socket.io').listen(server);
+var io = app.socket_io.listen(server);
 require('../sockets/base')(io);
 
 /**

@@ -27,21 +27,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Multer upload
-app.use(multer({ dest: './cache/',
-  rename: function (fieldname, filename) {
-    return filename + Date.now();
-  },
-  onFileUploadStart: function (file) {
-    console.log(file.originalname + ' is starting ...');
-  },
-  onFileUploadComplete: function (file) {
-    console.log(file.fieldname + ' uploaded to  ' + file.path)
-    var dataEntry = new models.File({ path: 'ruta', parentfile: null, url: 'url', filetype: 'file' });
-    dataEntry.save();
-  }
-}));
-
 // Routes
 app.use('/', file);
 app.use('/files', file);

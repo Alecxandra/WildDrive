@@ -12,10 +12,17 @@
 
 <body>
   <form id="upload_file_form" action="/files/upload" enctype="multipart/form-data" method="post">
-  <input type="file" name="uploadfile">
-  <br>
-  <input type="submit" value="Upload">  
+    <input type="text" name="parentfile">
+    <input type="file" name="uploadfile">
+    <br>
+    <input type="submit" value="Upload">  
   </form> 
+  
+  <form id="mkdir_form" action="/files/mkdir/557dad43329b56ec0c317f31" method="post">
+  <input type="text" name="folder_name">
+  <br>
+  <input type="submit" value="create">  
+  </form>
   
   <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>

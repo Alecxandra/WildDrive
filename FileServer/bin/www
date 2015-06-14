@@ -34,7 +34,6 @@ server.on('listening', onListening);
  */
  
 var io = app.socket_io.listen(server);
-require('../sockets/base')(io);
 
 /**
  * Normalize a port into a number, string, or false.

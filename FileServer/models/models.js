@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-var connection = mongoose.connect('mongodb://localhost/wildzapp', function(error) {
+var connection = mongoose.connect('mongodb://localhost/wild-drive', function(error) {
 	if (error)
 		console.log(error);
 });
@@ -10,14 +10,14 @@ var models = {};
 var Schema = mongoose.Schema;
 
 //------------------------------------------------------
-var FileSchema = new Schema({
-	path: String,
-  parentfile : {type: Schema.Types.ObjectId ,ref: 'File'},
+var fileSchema = new Schema({
+  name: String,
+  _parentfile: { type: Schema.Types.ObjectId, ref: 'File' },
   url: String,
-  filetype: String
+  filetype: String,
 });
 
-models.File = connection.model('files', FileSchema);
+models.File = connection.model('File', fileSchema);
 
 
 

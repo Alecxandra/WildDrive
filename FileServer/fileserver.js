@@ -12,7 +12,6 @@ var router = express.Router();
 var http = require('http');
 
 var models = require('./models/models');
-var file = require('./routes/files');
 
 var app = express();
 
@@ -29,6 +28,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Socketio
+io.on('connection', function(socket) {
+  console.log("Nodo conectado");
+});
+
+
 // Routes
 
 router.get('/', function(req, res, next) {
@@ -37,21 +42,29 @@ router.get('/', function(req, res, next) {
 
 router.post('/upload/:parent_id', [ multer({ dest: './cache/'}), function(req, res){
   console.log(req.body); // form fields
+  console.log(req.params); 
   console.log(req.files); // form files
   //mandarlo al server cliente
-  var parent = null;
-  if (req.params.parent_id != 0) {
-    parent = Schema.Types.ObjectId(req.params.parent_id);
-  } 
-  var dataEntry = new models.File({ name: req.files.uploadfile.originalname, _parentfile: parent, url: null, filetype: 'file' });
-  dataEntry.save(function(err) {
-    if (err) {
+  models.File.findOne({ _id: req.params.parent_id }).exec(function(err, file) {
+    if (err)
       console.log(err);
+    var dataEntry = null;
+    
+    if (file) {
+      dataEntry = new models.File({ name: req.files.uploadfile.originalname, _parentfile: file._id, url: null, filetype: 'file' });
     } else {
-      console.log("Guardado con exito");
+      dataEntry = new models.File({ name: req.files.uploadfile.originalname, _parentfile: null, url: null, filetype: 'file' });
     }
+    
+    dataEntry.save(function(err) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log("Guardado con exito");
+      }
+    });
+    res.render('file');
   });
-  res.render('file');  
   //res.status(204).end();
 }]);
 

@@ -28,12 +28,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Socketio
-io.on('connection', function(socket) {
-  console.log("Nodo conectado");
-});
-
-
 // Routes
 
 router.get('/', function(req, res, next) {
@@ -155,4 +149,11 @@ var port = process.env.PORT || 3000;
 app.set('port', port);
 var server = http.createServer(app);
 server.listen(port);
-io.listen(server);
+io = io.listen(server);
+
+
+//Socket io
+// Socketio
+io.sockets.on('connection', function(socket) {
+		
+});

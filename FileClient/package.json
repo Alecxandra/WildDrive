@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./fileclient.js"
   },
   "dependencies": {
     "body-parser": "~1.12.0",
@@ -14,7 +14,6 @@
     "serve-favicon": "~2.2.0",
     "ejs": "^2.3.1",
     "socket.io": "^1.3.5",
-    "mongoose": "^3.8.25",
-    "express-session": "^1.10.3"
+    "socket.io-client": "^1.3.5"
   }
 }

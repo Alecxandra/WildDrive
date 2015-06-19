@@ -8,8 +8,11 @@ var bodyParser = require('body-parser');
 var multer  = require('multer');
 var io = require('socket.io');
 var Schema = require('mongoose').Schema;
-var router = express.Router();
+var fileRouter = express.Router();
+var homeRouter = express.Router();
 var http = require('http');
+var fs = require('fs');
+var cors = require('cors');
 
 var models = require('./models/models');
 
@@ -28,47 +31,85 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Socketio
-io.on('connection', function(socket) {
-  console.log("Nodo conectado");
-});
+//CORS
+app.use(cors());
 
+// Server
+var port = process.env.PORT || 3000;
+app.set('port', port);
+var server = http.createServer(app);
+server.listen(port);
+io = io.listen(server);
+
+//Socket io
+// Socketio
+io.sockets.on('connection', function(socket) {
+		socket.on('filesaved', function(file_saved) {
+      console.log("Entre al evento");
+      models.File.findOne({ _id: file_saved.dataEntry }, function(err, dataEntry) {
+        dataEntry.url = file_saved.url;
+        
+        dataEntry.save(function(err) {
+          if (err)
+            console.log(err);
+          else
+            console.log("Data entry actualizada con éxito");
+        });
+      });
+    });
+});
 
 // Routes
 
-router.get('/', function(req, res, next) {
+fileRouter.get('/', function(req, res, next) {
 		res.render('file');
 });
 
-router.post('/upload/:parent_id', [ multer({ dest: './cache/'}), function(req, res){
+fileRouter.post('/upload/:parent_id', [ multer({ dest: './cache/'}), function(req, res){
   console.log(req.body); // form fields
   console.log(req.params); 
   console.log(req.files); // form files
-  //mandarlo al server cliente
-  models.File.findOne({ _id: req.params.parent_id }).exec(function(err, file) {
+  
+  var fileInfo = {
+    file_ext: req.files.uploadfile.extension,
+    file_content: ""
+  };
+  
+  fs.readFile(req.files.uploadfile.path, function(err, data) {
     if (err)
       console.log(err);
-    var dataEntry = null;
     
-    if (file) {
-      dataEntry = new models.File({ name: req.files.uploadfile.originalname, _parentfile: file._id, url: null, filetype: 'file' });
-    } else {
-      dataEntry = new models.File({ name: req.files.uploadfile.originalname, _parentfile: null, url: null, filetype: 'file' });
-    }
+    fileInfo.file_content = data.toString("utf-8");
     
-    dataEntry.save(function(err) {
-      if (err) {
+    models.File.findOne({ _id: req.params.parent_id }).exec(function(err, file) {
+      if (err)
         console.log(err);
+      var dataEntry = null;
+
+      if (file) {
+        dataEntry = new models.File({ name: req.files.uploadfile.originalname, _parentfile: file._id, url: null, filetype: 'file' });
       } else {
-        console.log("Guardado con exito");
+        dataEntry = new models.File({ name: req.files.uploadfile.originalname, _parentfile: null, url: null, filetype: 'file' });
       }
+
+      dataEntry.save(function(err) {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log(dataEntry);
+          fileInfo.dataEntry = dataEntry._id;
+          io.emit('sendfile', fileInfo);
+          console.log("Guardado con exito");
+        }
+      });
+      res.render('file');
     });
-    res.render('file');
   });
+  
   //res.status(204).end();
 }]);
 
-router.get('/get_tree/:parent_id', function(req, res, next) {
+homeRouter.get('/get_tree/:parent_id', function(req, res, next) {
   var parent = null
   
   if (req.params.parent_id != 0) {
@@ -94,7 +135,7 @@ router.get('/get_tree/:parent_id', function(req, res, next) {
   });
 });
 
-router.post('/mkdir/:parent_id', function(req, res, next) {
+homeRouter.post('/mkdir/:parent_id', function(req, res, next) {
   models.File.findOne({ _id: req.params.parent_id }).exec(function(err, file) {
     if (err)
       console.log(err);
@@ -107,16 +148,25 @@ router.post('/mkdir/:parent_id', function(req, res, next) {
     dataEntry.save(function(err) {
       if (err) {
         console.log(err);
+        res.json({ status: "error" });
       } else {
         console.log("Guardado con exito");
+        res.json({ status: "ok" });
       }
     });
-    res.render('file');
   });
 });
 
-app.use('/', router);
-app.use('/files', router);
+//---------------------------------------------------------------
+
+homeRouter.get('/', function(req, res, next) {
+  res.render('index');
+});
+
+//---------------------------------------------------------------
+
+app.use('/', homeRouter);
+app.use('/files', fileRouter);
 
 
 // catch 404 and forward to error handler
@@ -149,10 +199,3 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
-
-// Server
-var port = process.env.PORT || 3000;
-app.set('port', port);
-var server = http.createServer(app);
-server.listen(port);
-io.listen(server);

@@ -1,6 +1,7 @@
 $(document).ready(function(){
 
 	var serverURL = "http://green-box-37-202764.use1.nitrousbox.com/";
+  var actualFolderID = 0;
 
 	// Boton Cancelar Crear Carpeta
 	$('#boton-cancelar-crear-carpeta').click(function(){
@@ -13,13 +14,23 @@ $(document).ready(function(){
 	// Boton crear nueva carpeta
 	$('.boton-nueva-carpeta').click(function(){
 		$('#new-folder-wrapper').fadeIn();
+    setTimeout(function(){
+			$('#nombre-carpeta').focus();
+		}, 400);
 	});
 
 	// Boton aceptar crear nueva carpeta
 	$('#boton-crear-carpeta').click(function(){
 		var nombreCarpeta = $('#nombre-carpeta').val();
-		console.log(nombreCarpeta);
-		$('#new-folder-wrapper').fadeOut();
+    $('#loader-wrapper').fadeIn();
+    $.post(serverURL + "mkdir/" + actualFolderID, {folder_name:nombreCarpeta}, function(data){
+      console.log(data);
+      $.get(serverURL + "get_tree/" + actualFolderID, function(data){
+        fillExplorer(data);
+        $('#new-folder-wrapper').fadeOut();
+        $('#loader-wrapper').fadeOut();
+      });
+    });
 		setTimeout(function(){
 			$('#nombre-carpeta').val("");
 		}, 400);
@@ -27,10 +38,10 @@ $(document).ready(function(){
 
 
 	// Poblar explorador
-	var fillExplorer = function(structure){					
+	var fillExplorer = function(structure){	
 		$('#file-explorer-wrapper').empty();
 
-		if (structure.length == undefined || structure.length == 0){
+		if (structure.length === undefined || structure.length === 0){
 			$( '<div class="empty-Folder">Carpeta Vacía</div>' ).appendTo( "#file-explorer-wrapper" );
 		}
 
@@ -47,8 +58,9 @@ $(document).ready(function(){
 				$('#F' + i).dblclick({id:structure[i].id, name:name}, function(event){
 					$('#loader-wrapper').fadeIn();
 					$.get(serverURL + "get_tree/" + event.data.id, function(data){
-						fillExplorer(data);
-						renderNavigationBar(data, event.data.name);
+						actualFolderID = event.data.id;
+            fillExplorer(data);
+						renderNavigationBar(data, event.data.name, event.data.id);
 						$('#loader-wrapper').fadeOut();
 					});
 				});
@@ -68,12 +80,13 @@ $(document).ready(function(){
 	};
 
 
-	var renderNavigationBar = function(structure, folderName){
+	var renderNavigationBar = function(structure, folderName, folderID){
 		var id = new Date().getTime();
 		$( "<div class='btn btn-Nav' id='nb" + id + "'><button type='button' class='btn btn-link'>" + folderName + "</button>></div>" ).appendTo("#route-wrapper");
 
 		$('#nb' + id).click(function(){
 			$('#loader-wrapper').fadeIn();
+      actualFolderID = folderID;
 			fillExplorer(structure);
 			$('#loader-wrapper').fadeOut();
 			$.each( $('#nb' + id).nextAll(), function( key, element ) {
@@ -88,28 +101,29 @@ $(document).ready(function(){
 		}
 		return name;
 	}
-
-	/*var rootStructure = [{
-		name: "Hola",
-		type: "Folder",
-		url: "edilson.se.la.traga",
-		content: [	//Si es folder
-			{
-				name:"Hola.txt",
-				type:"File",
-				url:"edilson.se.la.traga"
-			},{
-				name:"ASDF",
-				type:"Folder",
-				url:"edilson.se.la.traga",
-				content:{}
-			}
-		]
-	}];*/
+  
+  $('.boton-subir-archivo').click(function(){
+    $('#upload-file-wrapper').fadeIn();
+  });
+  
+  $('#boton-cancelar-subir-archivo').click(function(){
+    $('#upload-file-wrapper').fadeOut();
+  });
+  
+  $('#upload_file_form').on("submit", function(evt){
+    evt.preventDefault();
+    
+    $.post(serverURL + "files/upload/" + actualFolderID, {}, function(data){
+      
+    });
+    
+    return false;
+  });
+  
 	$('#loader-wrapper').fadeIn();
 	$.get(serverURL + "get_tree/0", function(data){
 		fillExplorer(data);
-		renderNavigationBar(data, "Mi Unidad");
+		renderNavigationBar(data, "Mi Unidad", 0);
 		$('#loader-wrapper').fadeOut();
 	});
 

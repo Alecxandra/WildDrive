@@ -82,18 +82,45 @@ html,body {
 	display: none;
 }
 
+#upload-file-wrapper{
+  content: " ";
+	z-index: 10;
+	display: block;
+	position: absolute;
+	height: 100%;
+	top: 0;
+	left: 0;
+	right: 0;
+	background: rgba(0, 0, 0, 0.5);
+	display: none;
+}
+
 #new-folder-content-wrapper{
 	height: 200px;
 	width: 300px;
 	position: absolute;
 	background: white;
 	top: 50%;
-    left:50%;
-    margin-top: -100px;
-    margin-left: -150px;
-    text-align: center;
-    padding: 20px;
-    border-radius: 5px;
+  left:50%;
+  margin-top: -100px;
+  margin-left: -150px;
+  text-align: center;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+#upload-file-content-wrapper{
+  min-height: 190px;
+	min-width: 400px;
+	position: absolute;
+	background: white;
+	top: 50%;
+  left:50%;
+  margin-top: -100px;
+  margin-left: -150px;
+  text-align: center;
+  padding: 20px;
+  border-radius: 5px;
 }
 
 .empty-folder{

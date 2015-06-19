@@ -148,11 +148,12 @@ homeRouter.post('/mkdir/:parent_id', function(req, res, next) {
     dataEntry.save(function(err) {
       if (err) {
         console.log(err);
+        res.json({ status: "error" });
       } else {
         console.log("Guardado con exito");
+        res.json({ status: "ok" });
       }
     });
-    res.render('file');
   });
 });
 

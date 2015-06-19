@@ -7,6 +7,10 @@ var bodyParser = require('body-parser');
 var io = require('socket.io');
 var app = express();
 var http = require('http');
+var fs = require('fs');
+var randtoken = require('rand-token');
+
+var config = require('./config');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -27,6 +31,18 @@ var socket = require('socket.io-client')('http://green-box-37-202764.use1.nitrou
 
 socket.on('connect', function() {
   console.log('Conectado al master');
+});
+
+socket.on('sendfile', function(file) {
+  var token = randtoken.generate(16);
+  fs.writeFile("dfs/" + token + '.' + file.file_ext, file.file_content, function(err) {
+    if (err) {
+      console.log(err); 
+    } else  {
+      console.log("Guardado con éxito.");
+      socket.emit('filesaved', { url:config.client_url + token + '.' + file.file_ext, dataEntry: file.dataEntry });
+    }
+  });
 });
 
 //Routes

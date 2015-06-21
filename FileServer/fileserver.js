@@ -10,6 +10,7 @@ var io = require('socket.io');
 var Schema = require('mongoose').Schema;
 var fileRouter = express.Router();
 var homeRouter = express.Router();
+var adminRouter = express.Router();
 var http = require('http');
 var fs = require('fs');
 var cors = require('cors');
@@ -43,7 +44,19 @@ io = io.listen(server);
 
 //Socket io
 // Socketio
+var webClients = [];
+var fileServers = [];
+
 io.sockets.on('connection', function(socket) {
+  
+    if (socket.handshake.query.type === 'fileclient') {
+      fileServers.push(socket.handshake.query.server_name);
+    }
+  
+    if (socket.handshake.query.type === 'webclient') {
+      webClients.push(socket.handshake.address.address + ":" + socket.handshake.address.port);
+    }
+  
 		socket.on('filesaved', function(file_saved) {
       console.log("Entre al evento");
       models.File.findOne({ _id: file_saved.dataEntry }, function(err, dataEntry) {
@@ -163,10 +176,27 @@ homeRouter.get('/', function(req, res, next) {
   res.render('index');
 });
 
+homeRouter.get('/editor', function(req, res, next) {
+  res.render('editor');
+});
+
+//---------------------------------------------------------------
+
+//---------------------------------------------------------------
+
+adminRouter.get('/web_clients', function(req, res, next) {
+  res.render('web_clients', { web_clients: webClients });
+});
+
+adminRouter.get('/file_clients', function(req, res, next) {
+  res.render('file_clients', { file_clients: fileServers });
+});
+
 //---------------------------------------------------------------
 
 app.use('/', homeRouter);
 app.use('/files', fileRouter);
+app.use('/admin', adminRouter);
 
 
 // catch 404 and forward to error handler

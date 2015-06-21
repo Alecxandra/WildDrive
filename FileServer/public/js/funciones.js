@@ -50,11 +50,11 @@ $(document).ready(function(){
 			if (structure[i].type == "folder"){
 				// Crear el elemento HTML
 				var folder = "<div class='archivo' id='F" + i + "'><img class='icono-archivo' src='resources/folder.png'><h5 class='nombre-archivo'>" + 
-				prepareName(structure[i].name) + "</h5></div>";
+			structure[i].name + "</h5></div>";
 				$( folder ).appendTo( "#file-explorer-wrapper" );
 
 				// Añadir evento click al elemento
-				var name = prepareName(structure[i].name);
+				var name = structure[i].name;
 				$('#F' + i).dblclick({id:structure[i].id, name:name}, function(event){
 					$('#loader-wrapper').fadeIn();
 					$.get(serverURL + "get_tree/" + event.data.id, function(data){
@@ -67,13 +67,14 @@ $(document).ready(function(){
 			} else {	// Si es un archivo
 				// Crear el elemento HTML
 				var file = "<div class='archivo' id='A" + i + "'><img class='icono-archivo' src='resources/file.png'><h5 class='nombre-archivo'>" + 
-				prepareName(structure[i].name) + "</h5></div>";
+				structure[i].name + "</h5></div>";
 				$( file ).appendTo( "#file-explorer-wrapper" );
 
 				// Añadir evento click al elemento
 				file = structure[i];
 				$('#A' + i).dblclick(function(){
-					console.log(file.url);
+          var win = window.open(window.location.href + "editor?url=" + file.url + "&name=" + file.name, '_blank');
+					win.focus();
 				});
 			}
 		}
@@ -82,7 +83,7 @@ $(document).ready(function(){
 
 	var renderNavigationBar = function(structure, folderName, folderID){
 		var id = new Date().getTime();
-		$( "<div class='btn btn-Nav' id='nb" + id + "'><button type='button' class='btn btn-link'>" + folderName + "</button>></div>" ).appendTo("#route-wrapper");
+		$( "<div class='btn btn-nav' id='nb" + id + "'><button type='button' class='btn btn-link'>" + folderName + "</button>></div>" ).appendTo("#route-wrapper");
 
 		$('#nb' + id).click(function(){
 			$('#loader-wrapper').fadeIn();
@@ -93,13 +94,6 @@ $(document).ready(function(){
 				element.remove();
 			});
 		});
-	}
-
-	var prepareName = function(name){
-		if (name.length > 10){
-			name = name.slice(10);
-		}
-		return name;
 	}
   
   $('.boton-subir-archivo').click(function(){

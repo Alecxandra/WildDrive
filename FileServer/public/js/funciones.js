@@ -122,7 +122,8 @@ $(document).ready(function(){
 
 		$('#nb' + id).click(function(){
 			$('#loader-wrapper').fadeIn();
-      actualFolderID = folderID;
+     		actualFolderID = folderID;
+     		 $("#upload_file_form").attr("action", "/files/upload/" + actualFolderID);
 			fillExplorer(structure);
 			$('#loader-wrapper').fadeOut();
 			$.each( $('#nb' + id).nextAll(), function( key, element ) {

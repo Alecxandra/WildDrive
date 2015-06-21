@@ -17,15 +17,23 @@
 				<button id="boton-crear-carpeta" class="btn btn-success">Crear</button>
 			</div>
 		</div>
-    <div id="upload-file-wrapper">
+		<div id="new-file-wrapper">
+			<div id="new-folder-content-wrapper">
+				<h4>Nuevo Archivo</h4><br>
+				<input type="text" class="form-control" id="nombre-archivo" placeholder="Nombre Archivo"><br>
+				<button id="boton-cancelar-crear-archivo" class="btn btn-default">Cancelar</button>
+				<button id="boton-aceptar-crear-archivo" class="btn btn-success">Crear</button>
+			</div>
+		</div>
+    	<div id="upload-file-wrapper">
 			<div id="upload-file-content-wrapper">
 				<h4>Subir Archivo</h4><br>
 				<form id="upload_file_form" enctype="multipart/form-data" method="post">
-          <input id="file-selector" type="file" name="uploadfile">
-          <br>
-          <input type="submit" value="Upload" class="btn btn-success">  
-        </form>
-        <button id="boton-cancelar-subir-archivo" class="btn btn-danger">Cancelar</button>
+		          <input id="file-selector" type="file" name="uploadfile">
+		          <br>
+		          <input type="submit" value="Upload" class="btn btn-success">  
+		        </form>
+        		<button id="boton-cancelar-subir-archivo" class="btn btn-danger">Cancelar</button>
 			</div>
 		</div>
 		<div id="wild-drive-app-Wrapper">
@@ -50,7 +58,7 @@
 									</div>
 								</form>
 								<li class="boton-nueva-carpeta" title="Nueva Carpeta"><a href="#"><span class="glyphicon glyphicon-folder-close" aria-hidden="true"></span></a></li>
-								<li id="boton-toolbar-nuevo-archivo" title="Nuevo Archivo"><a href="#"><span class="glyphicon glyphicon-file" aria-hidden="true"></span></a></li>
+								<li id="boton-toolbar-nuevo-archivo" class="boton-nuevo-archivo" title="Nuevo Archivo"><a href="#"><span class="glyphicon glyphicon-file" aria-hidden="true"></span></a></li>
 								<li id="boton-toolbar-subir-archivo" title="Subir Archivo"><a href="#"><span class="glyphicon glyphicon-upload boton-subir-archivo" aria-hidden="true"></span></a></li>
 				    		</ul>
 						</div>
@@ -66,13 +74,37 @@
 								<span class="caret"></span>
 							</button>
 							<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-								<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Archivo</a></li>
+								<li role="presentation" class="boton-nuevo-archivo"><a role="menuitem" tabindex="-1" href="#">Archivo</a></li>
 								<li class="boton-nueva-carpeta" role="presentation"><a role="menuitem" tabindex="-1" href="#">Carpeta</a></li>
 								<li class="boton-subir-archivo" role="presentation"><a role="menuitem" tabindex="-1" href="#">Subir Archivo</a></li>
 							</ul>
 						</div>
 					</div>
 					<div id="navigation-tree-wrapper">
+						<div id="tree">
+							<div class="tree-element">
+								<div class="tree-element-name"><span class="glyphicon glyphicon-triangle-bottom"></span> <span class="glyphicon glyphicon-folder-open"></span>  Mi Unidad</div>
+								<div class="tree-element-content">
+									<div class="tree-element">
+										<div class="tree-element-name"><span class="glyphicon glyphicon-triangle-bottom"></span> <span class="glyphicon glyphicon-folder-open"></span>  Folder 1</div>
+										<div class="tree-element-content">
+											<div class="tree-element">
+												<div class="tree-element-name"><span class="glyphicon glyphicon-triangle-right"></span> <span class="glyphicon glyphicon-folder-close"></span>  Folder 3</div>
+												<div class="tree-element-content">
+
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="tree-element">
+										<div class="tree-element-name"><span class="glyphicon glyphicon-triangle-right"></span> <span class="glyphicon glyphicon-folder-close"></span>  Folder 2</div>
+										<div class="tree-element-content">
+
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 
 						<!--form id="upload_file_form" action="/files/upload/557db53737781dd50dfec0ca" enctype="multipart/form-data" method="post">
 						    <input type="file" name="uploadfile">

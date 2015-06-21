@@ -69,7 +69,7 @@ html,body {
 	cursor: pointer;
 }
 
-#new-folder-wrapper{
+#new-folder-wrapper, #new-file-wrapper{
 	content: " ";
 	z-index: 10;
 	display: block;
@@ -154,8 +154,54 @@ html,body {
     margin-top: calc(100vh - 450px);
 }
 
+#tree{
+	margin-top: 15px;
+	color: gray;
+}
 
-/*
-	width: calc(100vw - 267px);
-	width: 250px;
-*/
+.tree-element{
+	position: relative;
+	margin-left: 20px;
+	margin-top: 5px;
+	cursor: pointer;
+}
+
+#wild-drive-app-editor-Wrapper{
+	background-color: #808080;
+}
+
+#text-editor{
+	display: block;
+	margin-left: auto;
+    margin-right: auto;
+    height: 150%;
+  	width: 60%;
+  	padding: 70px;
+  	resize: none;
+}
+
+#crazy-div{
+	height: 20px;
+}
+
+#guardado-exito{
+	position: absolute;
+	margin-top: 55%;
+	margin-left: 20px;
+	background-color: #a2e665;
+	border-radius: 10px;
+	padding: 10;
+	opacity: .8;
+	display: none;
+}
+
+#guardado-error{
+	position: absolute;
+	margin-top: 55%;
+	margin-left: 20px;
+	background-color: #ffa500;
+	border-radius: 10px;
+	padding: 10;
+	opacity: .8;
+	display: none;
+}

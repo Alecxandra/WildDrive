@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-	var serverURL = "http://green-box-37-202764.use1.nitrousbox.com/";
+  var serverURL = "http://green-box-37-202764.use1.nitrousbox.com/";
   var actualFolderID = 0;
 
 	// Boton Cancelar Crear Carpeta
@@ -22,17 +22,52 @@ $(document).ready(function(){
 	// Boton aceptar crear nueva carpeta
 	$('#boton-crear-carpeta').click(function(){
 		var nombreCarpeta = $('#nombre-carpeta').val();
-    $('#loader-wrapper').fadeIn();
-    $.post(serverURL + "mkdir/" + actualFolderID, {folder_name:nombreCarpeta}, function(data){
-      console.log(data);
-      $.get(serverURL + "get_tree/" + actualFolderID, function(data){
-        fillExplorer(data);
-        $('#new-folder-wrapper').fadeOut();
-        $('#loader-wrapper').fadeOut();
-      });
-    });
+	    $('#loader-wrapper').fadeIn();
+	    $.post(serverURL + "mkdir/" + actualFolderID, {folder_name:nombreCarpeta}, function(data){
+	      console.log(data);
+	      $.get(serverURL + "get_tree/" + actualFolderID, function(data){
+	        fillExplorer(data);
+	        $('#new-folder-wrapper').fadeOut();
+	        $('#loader-wrapper').fadeOut();
+	      });
+	    });
 		setTimeout(function(){
 			$('#nombre-carpeta').val("");
+		}, 400);
+	});
+
+
+	// Boton crear nuevo archivo
+	$('.boton-nuevo-archivo').click(function(){
+		$('#new-file-wrapper').fadeIn();
+    setTimeout(function(){
+			$('#nombre-archivo').focus();
+		}, 400);
+	});
+
+	// Boton aceptar crear nuevo archivo
+	$('#boton-aceptar-crear-archivo').click(function(){
+		console.log("paseeee");
+		var nombreArchivo = $('#nombre-archivo').val();
+	    $('#loader-wrapper').fadeIn();
+	    $.post(serverURL + "newfile/" + actualFolderID, {file_name:nombreArchivo}, function(status){
+	    	//retorna el resultado de la creacion
+	      $.get(serverURL + "get_tree/" + actualFolderID, function(data){
+	        fillExplorer(data);
+	        $('#new-file-wrapper').fadeOut();
+	        $('#loader-wrapper').fadeOut();
+	      });
+	    });
+		setTimeout(function(){
+			$('#nombre-archivo').val("");
+		}, 400);
+	});
+
+	// Boton Cancelar Crear Carpeta
+	$('#boton-cancelar-crear-archivo').click(function(){
+		$('#new-file-wrapper').fadeOut();
+		setTimeout(function(){
+			$('#nombre-archivo').val("");
 		}, 400);
 	});
 

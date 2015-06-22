@@ -29,6 +29,7 @@ $(document).ready(function(){
 	      console.log(data);
 	      $.get(serverURL + "get_tree/" + actualFolderID, function(data){
 	        fillExplorer(data);
+          renderTree(data, actualFolderID);
 	        $('#new-folder-wrapper').fadeOut();
 	        $('#loader-wrapper').fadeOut();
 	      });
@@ -98,6 +99,7 @@ $(document).ready(function(){
 						actualFolderID = event.data.id;
             fillExplorer(data);
 						renderNavigationBar(data, event.data.name, event.data.id);
+            renderTree(data, event.data.id);
 						$('#loader-wrapper').fadeOut();
 					});
 				});
@@ -109,8 +111,8 @@ $(document).ready(function(){
 
 				// Añadir evento click al elemento
 				file = structure[i];
-				$('#A' + i).dblclick(function(){
-          var win = window.open(window.location.href + "editor?url=" + file.url + "&name=" + file.name, '_blank');
+				$('#A' + i).dblclick({url:file.url, name:file.name}, function(event){
+          var win = window.open(serverURL + "editor?url=" + event.data.url + "&name=" + event.data.name, '_blank');
 					win.focus();
 				});
 			}
@@ -137,9 +139,13 @@ $(document).ready(function(){
 	}
   
   
-  var renderTree = function(structure){
-    $('#tree').empty();
-    
+  var renderTree = function(structure, parentID){
+    $("[folderid='" + parentID + "']").empty();
+    for (var i = 0; i < structure.length; i++){
+      if (structure[i].type == "folder"){
+        $("[folderid='" + parentID + "']").append('<div class="tree-element"><div class="tree-element-name"><span class="glyphicon glyphicon-triangle-right"></span> <span class="glyphicon glyphicon-folder-close"></span>' + "  " + structure[i].name + '</div><div class="tree-element-content" folderid="' + structure[i].id + '"></div></div>');
+    }
+    }
   }
   
   
@@ -168,6 +174,7 @@ $(document).ready(function(){
 	$.get(serverURL + "get_tree/0", function(data){
 		fillExplorer(data);
 		renderNavigationBar(data, "Mi Unidad", 0);
+    renderTree(data, 0);
 		$('#loader-wrapper').fadeOut();
 	});
 

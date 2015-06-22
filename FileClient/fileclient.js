@@ -9,6 +9,7 @@ var app = express();
 var http = require('http');
 var fs = require('fs');
 var randtoken = require('rand-token');
+var cors = require('cors');
 
 var config = require('./config');
 
@@ -27,9 +28,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+//CORS
+app.use(cors());
+
 // Socket client
 
-var socket = require('socket.io-client')('http://green-box-37-202764.use1.nitrousbox.com/');
+var socket = require('socket.io-client')('http://green-box-37-202764.use1.nitrousbox.com/', { query: 'type=fileclient&server_name=' +  config.name + "&client_url=" + config.client_url });
 
 socket.on('connect', function() {
   console.log('Conectado al master');
@@ -50,8 +55,28 @@ socket.on('sendfile', function(file) {
 //Routes
 
 homeRouter.get('/:file_id', function (req, res, next) {
-  
+  fs.readFile('dfs/' + req.params.file_id, function(err, data) {
+    if (err) {
+      console.log(err);
+      res.json({ status: 'error' });
+    } else {
+      res.json({ status: 'ok', file_content: data.toString() });
+    }
+  });
 });
+
+homeRouter.post('/:file_id', function(req, res, next) {
+  fs.writeFile('dfs/' + req.params.file_id, req.body.file_content, function(err, data) {
+    if (err) {
+      console.log(err);
+      res.json({ status: 'error' });
+    } else {
+      res.json({ status: 'ok' });
+    }
+  });
+});
+
+app.use('/', homeRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

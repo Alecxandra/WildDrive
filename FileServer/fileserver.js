@@ -115,7 +115,7 @@ fileRouter.post('/upload/:parent_id', [ multer({ dest: './cache/'}), function(re
           console.log("Guardado con exito");
         }
       });
-      res.render('file');
+      res.redirect('/');
     });
   });
   
@@ -167,6 +167,42 @@ homeRouter.post('/mkdir/:parent_id', function(req, res, next) {
         res.json({ status: "ok" });
       }
     });
+  });
+});
+
+homeRouter.post('/create_file/:parent_id', function(req, res, next) {
+  console.log(req.body); // form fields
+  console.log(req.params); 
+  
+  var fileInfo = {
+    file_ext: "",
+    file_content: "",
+    file_name: req.body.file_name
+  };
+    
+  models.File.findOne({ _id: req.params.parent_id }).exec(function(err, file) {
+    if (err)
+      console.log(err);
+    var dataEntry = null;
+
+    if (file) {
+      dataEntry = new models.File({ name: req.body.file_name, _parentfile: file._id, url: null, filetype: 'file' });
+    } else {
+      dataEntry = new models.File({ name: req.body.file_name, _parentfile: null, url: null, filetype: 'file' });
+    }
+
+    dataEntry.save(function(err) {
+      if (err) {
+        console.log(err);
+        
+      } else {
+        console.log(dataEntry);
+        fileInfo.dataEntry = dataEntry._id;
+        io.emit('sendfile', fileInfo);
+        console.log("Guardado con exito");
+      }
+    });
+    res.redirect('/');
   });
 });
 

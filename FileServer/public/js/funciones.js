@@ -11,6 +11,7 @@ $(document).ready(function(){
 		}, 400);
 	});
 
+  
 	// Boton crear nueva carpeta
 	$('.boton-nueva-carpeta').click(function(){
 		$('#new-folder-wrapper').fadeIn();
@@ -19,6 +20,7 @@ $(document).ready(function(){
 		}, 400);
 	});
 
+  
 	// Boton aceptar crear nueva carpeta
 	$('#boton-crear-carpeta').click(function(){
 		var nombreCarpeta = $('#nombre-carpeta').val();
@@ -45,25 +47,25 @@ $(document).ready(function(){
 		}, 400);
 	});
 
+  
 	// Boton aceptar crear nuevo archivo
 	$('#boton-aceptar-crear-archivo').click(function(){
-		console.log("paseeee");
 		var nombreArchivo = $('#nombre-archivo').val();
-	    $('#loader-wrapper').fadeIn();
-	    $.post(serverURL + "newfile/" + actualFolderID, {file_name:nombreArchivo}, function(status){
-	    	//retorna el resultado de la creacion
-	      $.get(serverURL + "get_tree/" + actualFolderID, function(data){
-	        fillExplorer(data);
-	        $('#new-file-wrapper').fadeOut();
-	        $('#loader-wrapper').fadeOut();
-	      });
-	    });
+    $('#loader-wrapper').fadeIn();
+    $.post(serverURL + "create_file/" + actualFolderID, {file_name:nombreArchivo}, function(status){
+      $.get(serverURL + "get_tree/" + actualFolderID, function(data){
+        fillExplorer(data);
+        $('#loader-wrapper').fadeOut();
+      });
+    });
+    $('#new-file-wrapper').fadeOut();
 		setTimeout(function(){
 			$('#nombre-archivo').val("");
 		}, 400);
 	});
 
-	// Boton Cancelar Crear Carpeta
+  
+	// Boton Cancelar Crear archivo
 	$('#boton-cancelar-crear-archivo').click(function(){
 		$('#new-file-wrapper').fadeOut();
 		setTimeout(function(){
@@ -71,7 +73,7 @@ $(document).ready(function(){
 		}, 400);
 	});
 
-
+  
 	// Poblar explorador
 	var fillExplorer = function(structure){	
 		$('#file-explorer-wrapper').empty();
@@ -115,40 +117,52 @@ $(document).ready(function(){
 		}
 	};
 
-
+  
 	var renderNavigationBar = function(structure, folderName, folderID){
 		var id = new Date().getTime();
 		$( "<div class='btn btn-nav' id='nb" + id + "'><button type='button' class='btn btn-link'>" + folderName + "</button>></div>" ).appendTo("#route-wrapper");
 
+    $("#upload_file_form").attr("action", "/files/upload/" + folderID);
+    
 		$('#nb' + id).click(function(){
 			$('#loader-wrapper').fadeIn();
-     		actualFolderID = folderID;
-     		 $("#upload_file_form").attr("action", "/files/upload/" + actualFolderID);
+     	actualFolderID = folderID;
 			fillExplorer(structure);
 			$('#loader-wrapper').fadeOut();
+      $("#upload_file_form").attr("action", "/files/upload/" + folderID);
 			$.each( $('#nb' + id).nextAll(), function( key, element ) {
 				element.remove();
 			});
 		});
 	}
   
+  
+  var renderTree = function(structure){
+    $('#tree').empty();
+    
+  }
+  
+  
+  $("#upload_file_form").submit(function(){
+    $('#upload-file-wrapper').fadeOut();
+    $('#loader-wrapper').fadeIn();
+    $.get(serverURL + "get_tree/" + actualFolderID, function(data){
+      fillExplorer(data);
+      $('#new-folder-wrapper').fadeOut();
+      $('#loader-wrapper').fadeOut();
+    });
+  });
+  
+  
   $('.boton-subir-archivo').click(function(){
     $('#upload-file-wrapper').fadeIn();
   });
+  
   
   $('#boton-cancelar-subir-archivo').click(function(){
     $('#upload-file-wrapper').fadeOut();
   });
   
-  $('#upload_file_form').on("submit", function(evt){
-    evt.preventDefault();
-    
-    $.post(serverURL + "files/upload/" + actualFolderID, {}, function(data){
-      
-    });
-    
-    return false;
-  });
   
 	$('#loader-wrapper').fadeIn();
 	$.get(serverURL + "get_tree/0", function(data){
@@ -157,4 +171,5 @@ $(document).ready(function(){
 		$('#loader-wrapper').fadeOut();
 	});
 
+  
 });
